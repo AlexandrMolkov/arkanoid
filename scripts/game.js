@@ -12,13 +12,11 @@ canvas.height = 1280
 
 buttonStart.addEventListener('click', e => {
     game.inMenu = false
-    game.running =  true
-    game.run()
 })
 
 const game = {
     inMenu: true,
-    running: false,
+    running: true,
     score: 0,
     lives: 3,
     initWidth: canvas.width,
@@ -65,7 +63,7 @@ const game = {
                 if (e.key === 'd' | e.key === 'ArrowRight') {
                     this.platform.setDir('R')
                 }
-                if (e.code === 'Space') {
+                if (e.code === 'Space' && !this.inMenu) {
                     if(this.ball.onPlatform === true) {
                         this.ball.start()
                     }
@@ -73,8 +71,7 @@ const game = {
 
                 if (e.code === 'Escape') {
                     this.inMenu = true,
-                    this.running = false
-                    showMenu(this.run)
+                    showMenu()
                 }
     
                 this.render()
@@ -256,9 +253,12 @@ const game = {
     run() {
         window.requestAnimationFrame(() => {
 
-            if(this.running) {
+            if(!this.inMenu){
                 this.update()
                 this.render()
+            }
+
+            if(this.running) {
                 this.run()
             }
             
