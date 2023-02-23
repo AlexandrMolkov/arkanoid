@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<!--     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes"> -->
+    <title>test</title>
+    <!-- <script src="https://yandex.ru/games/sdk/v2"></script> -->
+<!--     <script>
+        let ysdk;
+       
+        function initSDK() {
+            YaGames
+                .init()
+                .then(ysdk_ => {
+                    ysdk = ysdk_;
+                    ysdk.adv.showFullscreenAdv({
+                        callbacks: {
+                            onClose: wasShown => {
+                                console.info('First close')
+                            }
+                        }
+                    });
+                })
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttonElem = document.querySelector('#button');
+
+            let commonCounter = 0;
+            buttonElem.addEventListener('click', () => {
+                let counter = 0;
+
+                function getCallback(callbackName) {
+                    return () => {
+                        counter += 1;
+                        commonCounter += 1;
+
+                        if (commonCounter % 3 === 0) {
+                            throw new Error(`Test error in ${callbackName}, everything okey, it should not abort other code execution`);
+                        }
+
+                        console.info(`showFullscreenAdv; callback ${callbackName}; ${counter} call`);
+                    }
+                }
+
+                function makeSomethingImportant() {
+                    console.info('It\'s very important \'console.info\'');
+                }
+
+                if (ysdk) {
+                    ysdk.adv.showFullscreenAdv({
+                        callbacks: {
+                            onClose: makeSomethingImportant,
+                            onOpen: getCallback('onOpen'),
+                            onError: function(error) {
+                                console.error(error);
+                            },
+                            onOffline: getCallback('onOffline')
+                        }
+                    });
+                } else {
+                    makeSomethingImportant();
+                }
+            });
+        });
+    </script> -->
+    <title>Arcanoid</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- <button id="button">Показать рекламу</button> -->
+    <div id="gameArea">
+        <canvas id="gameCanvas"></canvas>
+        <div id="statsPanel"></div>
+        <div id="menu"></div>
+    </div>
+<!--     <script>
+        (function(d) {
+            var t = d.getElementsByTagName('script')[0];
+            var s = d.createElement('script');
+            s.src = 'https://yandex.ru/games/sdk/v2';
+            s.async = true;
+            t.parentNode.insertBefore(s, t);
+            s.onload = initSDK;
+        })(document);
+    </script> -->
+    <script src="app.js" type="module"></script>
+</body>
+
+</html>
