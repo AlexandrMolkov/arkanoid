@@ -6,18 +6,14 @@ const ball = {
     initY: 272,
     x: 320,
     y: platform.y - 30,
-    lastX: 320,
-    lastY: platform.y - 30,
     initWidth: 30,
     initHeight: 30,
-    width: 30,
-    height: 30,
+    width: 36,
+    height: 36,
     velocity: 12,
-    //initVelocity: 12,
     dx: 0,
     dy: 0,
     onPlatform: true,
-    //started: false,
 
     start() {
         console.log('start')
@@ -25,7 +21,6 @@ const ball = {
             this.onPlatform = false
             this.dy = -this.velocity
             this.dx = game.random(-this.velocity, this.velocity)
-            //this.started = true
             this.onPlatform = false
         }
         
@@ -36,11 +31,9 @@ const ball = {
         }
         if (this.dy) {
             this.y += this.dy
-            //this.lastY = this.y / game.heightScale
         }
         if (this.dx) {
             this.x += this.dx
-            //this.lastX = this.x / game.widthScale
         }
     },
     collide(object) {
@@ -58,19 +51,6 @@ const ball = {
     bumpBlock(block) {
         this.dy *= -1
         block.active = false
-        
-/* 
-        console.log(this.target) */
-
-/*         const target = 
-        const blocks = [] */
-
-/*         for(let block of game.blocks) {
-            if(block.active) blocks.push(block) 
-        }
-        console.log(blocks.length)
-        if(blocks.length == 0) {alert('win')} */
-
     },
     bumpPlatform(platform) {
         if(platform.dx) {
@@ -108,6 +88,9 @@ const ball = {
             this.dy = this.velocity
         } else if (ballBottom > worldBottom) {
 
+            game.sounds.bumpB.pause();
+            game.sounds.bumpB.currentTime = 0;
+            game.sounds.bumpB.play()
 
             if(game.lives > 0){
                 game.livesRemove()
@@ -122,8 +105,6 @@ const ball = {
 
     ballToStartPosition() {
         this.onPlatform = true
-        this.lastX = 320
-        this.lastY =  platform.y + 30
         this.x = 320
         this.y = platform.y - 30
         this.dy = 0

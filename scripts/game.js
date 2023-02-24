@@ -1,6 +1,6 @@
 import ball from "./ball.js"
 import platform from "./platform.js"
-import {uiWrapper, uiLives, uiCount, buttonStart, showMenu} from "./ui.js"
+import {uiWrapper, uiLives, uiCount, buttonStart, showMenu, inputCurLvl,curLvl} from "./ui.js"
 import levels from "./levels.js"
 
 console.log(levels.length)
@@ -12,6 +12,12 @@ canvas.height = 1280
 
 buttonStart.addEventListener('click', e => {
     game.inMenu = false
+})
+
+inputCurLvl.addEventListener('input', (e)=>{
+    game.currentLevel = e.target.value
+    curLvl.innerText = inputCurLvl.value
+    game.loadLvl()
 })
 
 const game = {
@@ -34,6 +40,7 @@ const game = {
     blocksCount: 0,
     currentLevel: 0,
     levels,
+    soundVolume: 0.3,
 
     sprites: {
         platform: null,
@@ -51,7 +58,9 @@ const game = {
 
     ],
     sounds: {
-        bump: null
+        bump: null,
+        bumpB: null,
+        bumpP: null,
     },
     setEvents() {
         window.addEventListener('keydown', e => {
@@ -97,10 +106,9 @@ const game = {
         for (let i = 0 ; i < this.levels[this.currentLevel].length; i++) {
             for (let j = 0; j < this.levels[this.currentLevel][i].length; j++) {
                 if(this.levels[this.currentLevel][i][j] !== '0'){
-
                     this.blocks.push({
-                        width: canvas.width / 10,
-                        height: 32,
+                        width: /* canvas.width / 10, */ 90,
+                        height: 48/* 32 */,
                         x: blockX,
                         y: blockY,
                         lastX: blockX,
@@ -110,11 +118,11 @@ const game = {
                     })
                 }
 
-               blockX += canvas.width / 9
+               blockX += 78 //canvas.width / 9
                //blockX += 68
             }
             blockX = 4
-            blockY += 42
+            blockY += 48
         }
         this.blocksCount = this.blocks.length
 
@@ -134,17 +142,22 @@ const game = {
         this.sprites.platform.src = 'assets/platform.png'
 
         this.sprites.block.blue = new Image()
-        this.sprites.block.blue.src = 'assets/brick_blue.png'
+        this.sprites.block.blue.src = 'assets/brick-neon-blue.png'
         this.sprites.block.green = new Image()
-        this.sprites.block.green.src = 'assets/brick_green.png'
+        this.sprites.block.green.src = 'assets/brick-neon-green.png'
         this.sprites.block.red = new Image()
-        this.sprites.block.red.src = 'assets/brick_red.png'
+        this.sprites.block.red.src = 'assets/brick-neon-red.png'
         this.sprites.block.violet = new Image()
-        this.sprites.block.violet.src = 'assets/brick_violet.png'
+        this.sprites.block.violet.src = 'assets/brick-neon-pink.png'
         this.sprites.block.yellow = new Image()
-        this.sprites.block.yellow.src = 'assets/brick_yellow.png'
+        this.sprites.block.yellow.src = 'assets/brick-neon-yellow.png'
         
-        this.sounds.bump = new Audio('assets/bump.mp3')
+        this.sounds.bump = new Audio('assets/bump-block.mp3')
+        this.sounds.bump.volume = this.soundVolume
+        this.sounds.bumpB = new Audio('assets/bump-bottom.mp3')
+        this.sounds.bumpB.volume = this.soundVolume
+        this.sounds.bumpP = new Audio('assets/bump-platform.mp3')
+        this.sounds.bumpP.volume = this.soundVolume
 
         this.loaded = true
 
@@ -155,19 +168,12 @@ const game = {
         this.ctx.drawImage(this.sprites.ball, this.ball.x, this.ball.y, this.ball.width, this.ball.height)
         this.ctx.drawImage(this.sprites.platform, this.platform.x, this.platform.y, this.platform.width, this.platform.height)
         this.renderBlocks()
-        canvas.style.cssText = `
-            aspect-ratio: 9/16;
-            max-height: 100vh;
-            max-width: 100vw;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        `
+
         canvas.style.marginTop = (window.innerHeight - canvas.offsetHeight) / 2 + 'px'
         uiWrapper.style.cssText = `
-        max-height: ${(canvas.offsetHeight/100)*5}px;
-        max-width: ${canvas.offsetWidth}px;
-        font-size: ${(canvas.offsetHeight/100)*5}px;
+            max-height: ${(canvas.offsetHeight/100)*5}px;
+            max-width: ${canvas.offsetWidth}px;
+            font-size: ${(canvas.offsetHeight/100)*5}px;
         
       `
     },
@@ -205,6 +211,11 @@ const game = {
         }
         uiCount.innerText = this.score
     },
+    loadLvl() {
+        this.blocks.splice(0, this.blocks.length)
+        this.createBlocks()
+        this.ball.ballToStartPosition()
+    },
     nextLevel() {
         if(this.currentLevel < this.levels.length-1) {
             this.currentLevel++
@@ -233,6 +244,8 @@ const game = {
         // collide blocks
         for (let block of this.blocks) {
             if(block.active && this.ball.collide(block)){
+                this.sounds.bump.pause();
+                this.sounds.bump.currentTime = 0;
                 this.sounds.bump.play()
                 this.ball.bumpBlock(block)
                 this.blocksCount -= 1
@@ -242,12 +255,15 @@ const game = {
         // collide platform
         if(this.ball.collide(this.platform)) {
             this.ball.bumpPlatform(this.platform)
+            this.sounds.bumpP.pause();
+            this.sounds.bumpP.currentTime = 0;
+            this.sounds.bumpP.play()
         }
 
         // collide bounds
         this.ball.collideBounds()
 
-        // collide platform
+        // collide bounds
         this.platform.collideBounds()
     },
     run() {
