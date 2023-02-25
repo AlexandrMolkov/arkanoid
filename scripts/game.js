@@ -1,9 +1,9 @@
 import ball from "./ball.js"
 import platform from "./platform.js"
-import {uiWrapper, uiLives, uiCount, buttonStart, showMenu, inputCurLvl,curLvl} from "./ui.js"
+import {uiWrapper, uiLives, uiCount, buttonStart, showMenu, inputCurLvl,curLvl, sfx, sfxvol} from "./ui.js"
 import levels from "./levels.js"
 
-console.log(levels.length)
+
 
 const canvas = document.querySelector('#gameCanvas')
 const area = document.querySelector('#gameArea')
@@ -16,8 +16,13 @@ buttonStart.addEventListener('click', e => {
 
 inputCurLvl.addEventListener('input', (e)=>{
     game.currentLevel = e.target.value
-    curLvl.innerText = inputCurLvl.value
+    curLvl.innerText = game.currentLevel
     game.loadLvl()
+})
+
+sfx.addEventListener('input', (e)=>{
+    game.changeSfxVolume(e.target.value)
+    sfxvol.innerText = game.soundVolume
 })
 
 const game = {
@@ -41,6 +46,14 @@ const game = {
     currentLevel: 0,
     levels,
     soundVolume: 0.3,
+
+    changeSfxVolume(v) {
+        this.soundVolume = v
+
+        for(let s in this.sounds) {
+            this.sounds[s].volume = this.soundVolume
+        }
+    },
 
     sprites: {
         platform: null,
